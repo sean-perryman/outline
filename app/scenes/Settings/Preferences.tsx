@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { languageOptions as availableLanguages } from "@shared/i18n";
 import {
   NotificationBadgeType,
+  ReadingWidth,
   TeamPreference,
   UserPreference,
 } from "@shared/types";
@@ -139,6 +140,24 @@ function Preferences() {
     [t]
   );
 
+  const readingWidthOptions: Option[] = React.useMemo(
+    () => [
+      { type: "item", label: t("Narrow"), value: ReadingWidth.Narrow },
+      { type: "item", label: t("Standard"), value: ReadingWidth.Standard },
+      { type: "item", label: t("Wide"), value: ReadingWidth.Wide },
+    ],
+    [t]
+  );
+
+  const handleReadingWidthChange = React.useCallback(
+    async (value: string) => {
+      user.setPreference(UserPreference.ReadingWidth, value as ReadingWidth);
+      await user.save();
+      toast.success(t("Preferences saved"));
+    },
+    [user, t]
+  );
+
   const handleNotificationBadgeChange = React.useCallback(
     async (value: string) => {
       user.setPreference(
@@ -261,6 +280,24 @@ function Preferences() {
           name={UserPreference.CommentsInGutter}
           checked={user.getPreference(UserPreference.CommentsInGutter)}
           onChange={handleCommentsInGutterChange}
+        />
+      </SettingRow>
+      <SettingRow
+        name={UserPreference.ReadingWidth}
+        label={t("Reading width")}
+        description={t(
+          "Set how wide the document content column is. Documents set to full width are unaffected."
+        )}
+      >
+        <InputSelect
+          options={readingWidthOptions}
+          value={user.getPreference(
+            UserPreference.ReadingWidth,
+            ReadingWidth.Narrow
+          )}
+          onChange={handleReadingWidthChange}
+          label={t("Reading width")}
+          labelHidden
         />
       </SettingRow>
       <SettingRow
