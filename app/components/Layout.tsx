@@ -12,6 +12,7 @@ import { useRightSidebarContent } from "~/components/RightSidebarContext";
 import SkipNavContent from "~/components/SkipNavContent";
 import SkipNavLink from "~/components/SkipNavLink";
 import env from "~/env";
+import useKeyDown from "~/hooks/useKeyDown";
 import useStores from "~/hooks/useStores";
 
 type Props = {
@@ -30,7 +31,16 @@ const Layout = React.forwardRef(function Layout_(
   ref: React.RefObject<HTMLDivElement>
 ) {
   const { ui } = useStores();
-  const showSidebar = !!sidebar && !ui.sidebarHidden;
+
+  useKeyDown("Escape", () => {
+    if (ui.chromeHidden) {
+      ui.disableFocusMode();
+    }
+  });
+
+  useKeyDown("f", ui.toggleFocusMode, { metaKey: true, shiftKey: true });
+
+  const showSidebar = !!sidebar && !ui.sidebarHidden && !ui.chromeHidden;
   const sidebarCollapsed =
     !showSidebar || (ui.sidebarIsClosed && sidebarCanCollapse);
   const sidebarRight = useRightSidebarContent();

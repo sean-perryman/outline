@@ -117,7 +117,21 @@ function Header(
           <div />
         )}
         <Actions align="center" justify="flex-end">
-          {typeof actions === "function" ? actions({ isCompact }) : actions}
+          {ui.chromeHidden ? (
+            <Tooltip content={t("Exit focus mode")} shortcut="Esc" side="bottom">
+              <Button
+                aria-label={t("Exit focus mode")}
+                onClick={ui.disableFocusMode}
+                icon={<CloseIcon />}
+                neutral
+                borderOnHover
+              />
+            </Tooltip>
+          ) : typeof actions === "function" ? (
+            actions({ isCompact })
+          ) : (
+            actions
+          )}
           {isSplitView && (
             <Tooltip content={t("Close pane")} side="bottom">
               <CloseSplitPaneButton

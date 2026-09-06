@@ -44,6 +44,7 @@ type PersistedData = Pick<
   | "sidebarRightWidth"
   | "sidebarCollapsed"
   | "tocVisible"
+  | "focusMode"
 >;
 
 class UiStore {
@@ -86,6 +87,17 @@ class UiStore {
 
   @observable
   sidebarCollapsed = false;
+
+  /**
+   * Whether focus mode is enabled. When it is, application chrome is hidden
+   * while a document is open so that only the document itself remains.
+   *
+   * This experiment branch defaults it on, so that a preview environment
+   * demonstrates the mode without anyone having to turn it on first. A shipping
+   * default would be off.
+   */
+  @observable
+  focusMode = true;
 
   // Whether the sidebar is hidden entirely, e.g. when embedding a document via
   // the ?sidebarHidden=1 query parameter. Not persisted across reloads.
@@ -159,6 +171,7 @@ class UiStore {
     const data: PersistedData = Storage.get(UI_STORE) || {};
     this.languagePromptDismissed = data.languagePromptDismissed;
     this.sidebarCollapsed = !!data.sidebarCollapsed;
+    this.focusMode = data.focusMode ?? true;
     // Widths are clamped as a drag may have been interrupted while stretched beyond the bounds,
     // or the bounds themselves may have since changed.
     const { sidebarResizeMinWidth: minWidth, sidebarMaxWidth: maxWidth } =
@@ -464,6 +477,16 @@ class UiStore {
   };
 
   @action
+  toggleFocusMode = () => {
+    this.set({ focusMode: !this.focusMode });
+  };
+
+  @action
+  disableFocusMode = () => {
+    this.set({ focusMode: false });
+  };
+
+  @action
   toggleCollapsedSidebar = () => {
     this.sidebarHidden = false;
     this.set({ sidebarCollapsed: !this.sidebarCollapsed });
@@ -551,6 +574,18 @@ class UiStore {
     return this.sidebarCollapsed || this.sidebarHidden;
   }
 
+  /**
+   * Whether application chrome should be hidden for focus mode.
+   *
+   * Deliberately scoped to when a document is open: navigating to search,
+   * settings, or home brings the chrome back on its own, so focus mode never
+   * leaves the app in a state the user has to dig their way out of.
+   */
+  @computed
+  get chromeHidden() {
+    return this.focusMode && !!this.activeDocumentId;
+  }
+
   @computed
   get resolvedTheme(): Theme | SystemTheme {
     if (this.themeOverride) {
@@ -569,6 +604,7 @@ class UiStore {
     return {
       tocVisible: this.tocVisible,
       sidebarCollapsed: this.sidebarCollapsed,
+      focusMode: this.focusMode,
       sidebarWidth: this.sidebarWidth,
       sidebarRightWidth: this.sidebarRightWidth,
       languagePromptDismissed: this.languagePromptDismissed,
