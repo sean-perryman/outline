@@ -66,8 +66,13 @@ const Sidebar = React.forwardRef<HTMLDivElement, Props>(function Sidebar_(
   // This experiment branch defaults the preference on so that a preview
   // environment demonstrates the change without anyone having to find the
   // setting first. A shipping default would be off.
+  //
+  // A public share renders this sidebar with no signed-in reader, so the
+  // default has to be applied explicitly rather than falling out of an
+  // optional chain that is undefined.
   const compact =
-    !isMobile && !!user?.getPreference(UserPreference.CompactSidebar, true);
+    !isMobile &&
+    (user ? user.getPreference(UserPreference.CompactSidebar, true) : true);
   const width = ui.sidebarWidth;
   const sidebarIsClosed = ui.sidebarIsClosed;
   const collapsed = sidebarIsClosed && canCollapse;
