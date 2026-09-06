@@ -10,7 +10,14 @@ import breakpoint from "styled-components-breakpoint";
 import { EditorStyleHelper } from "@shared/editor/styles/EditorStyleHelper";
 import { s } from "@shared/styles";
 import type { NavigationNode } from "@shared/types";
-import { IconType, TOCPosition, TeamPreference } from "@shared/types";
+import {
+  IconType,
+  ReadingWidth,
+  TOCPosition,
+  TeamPreference,
+  UserPreference,
+} from "@shared/types";
+import { documentWidthFor } from "@shared/utils/readingWidth";
 import { determineIconType } from "@shared/utils/icon";
 import type Document from "~/models/Document";
 import type Revision from "~/models/Revision";
@@ -320,8 +327,17 @@ function DocumentScene({
     : document.titleWithDefault;
   const favicon = hasEmojiInTitle ? emojiToUrl(document.icon!) : undefined;
 
+  // This experiment branch defaults to Narrow, so that a preview environment
+  // shows the change without anyone having to find the setting first. A
+  // shipping default would be Standard, which is the width documents already
+  // have. Public shares have no signed-in reader and take the same default.
+  const readingWidth = user
+    ? user.getPreference(UserPreference.ReadingWidth, ReadingWidth.Narrow)
+    : ReadingWidth.Narrow;
+
   const fullWidthTransformOffsetStyle = {
     ["--full-width-transform-offset"]: `${document.fullWidth && showContents ? tocOffset : 0}px`,
+    ["--document-width"]: documentWidthFor(readingWidth),
   } as React.CSSProperties;
 
   return (
@@ -482,7 +498,7 @@ const Main = styled.div<MainProps>`
         ? tocPosition === TOCPosition.Left
           ? `${EditorStyleHelper.tocWidth}px minmax(0, 1fr)`
           : `minmax(0, 1fr) ${EditorStyleHelper.tocWidth}px`
-        : `1fr minmax(0, ${`calc(46em + ${EditorStyleHelper.documentGutter})`}) 1fr`};
+        : `1fr minmax(0, ${`calc(min(46em, var(--document-width, ${EditorStyleHelper.documentWidth})) + ${EditorStyleHelper.documentGutter})`}) 1fr`};
   `};
 
   ${breakpoint("desktopLarge")`
@@ -491,7 +507,7 @@ const Main = styled.div<MainProps>`
         ? tocPosition === TOCPosition.Left
           ? `${EditorStyleHelper.tocWidth}px minmax(0, 1fr)`
           : `minmax(0, 1fr) ${EditorStyleHelper.tocWidth}px`
-        : `1fr minmax(0, ${`calc(${EditorStyleHelper.documentWidth} + ${EditorStyleHelper.documentGutter})`}) 1fr`};
+        : `1fr minmax(0, ${`calc(var(--document-width, ${EditorStyleHelper.documentWidth}) + ${EditorStyleHelper.documentGutter})`}) 1fr`};
   `};
 
   @media print {
@@ -499,7 +515,7 @@ const Main = styled.div<MainProps>`
     max-width: ${({ fullWidth }: MainProps) =>
       fullWidth
         ? `100%`
-        : `calc(${EditorStyleHelper.documentWidth} + ${EditorStyleHelper.documentGutter})`};
+        : `calc(var(--document-width, ${EditorStyleHelper.documentWidth}) + ${EditorStyleHelper.documentGutter})`};
   }
 `;
 
