@@ -379,6 +379,8 @@ export enum UserPreference {
   NotificationBadge = "notificationBadge",
   /** The display order of the reorderable sections in the sidebar. */
   SidebarSectionOrder = "sidebarSectionOrder",
+  /** Whether documents show a colour header band above the title. */
+  DocumentCovers = "documentCovers",
 }
 
 export enum HeadingPrefixStyle {
@@ -422,6 +424,7 @@ export type UserPreferences = {
   [UserPreference.ShowDocumentStats]?: boolean;
   [UserPreference.NotificationBadge]?: NotificationBadgeType;
   [UserPreference.SidebarSectionOrder]?: SidebarSection[];
+  [UserPreference.DocumentCovers]?: boolean;
 };
 
 export type SourceMetadata = {

@@ -8,7 +8,7 @@ import Text from "@shared/components/Text";
 import type { CommentAnchor } from "@shared/editor/commands/comment";
 import { richExtensions, withComments } from "@shared/editor/nodes";
 import { getLangFor } from "@shared/utils/language";
-import { DocumentPreference } from "@shared/types";
+import { DocumentPreference, UserPreference } from "@shared/types";
 import { colorPalette } from "@shared/constants";
 import Comment from "~/models/Comment";
 import type Document from "~/models/Document";
@@ -37,6 +37,7 @@ import {
 } from "~/utils/routeHelpers";
 import { decodeURIComponentSafe } from "~/utils/urls";
 import MultiplayerEditor from "./AsyncMultiplayerEditor";
+import DocumentCover from "./DocumentCover";
 import DocumentMeta from "./DocumentMeta";
 import DocumentTitle from "./DocumentTitle";
 import { first } from "es-toolkit/compat";
@@ -96,6 +97,12 @@ function DocumentEditor(props: Props, ref: React.ForwardedRef<SharedEditor>) {
   const commentingEnabled = !!team?.commentingEnabled;
 
   const iconColor = document.color ?? (first(colorPalette) as string);
+  // This experiment branch defaults covers on, so that a preview environment
+  // shows the treatment without anyone having to find the setting first. A
+  // shipping default would be off.
+  const showCover = user
+    ? user.getPreference(UserPreference.DocumentCovers, true)
+    : true;
   const childRef = React.useRef<HTMLDivElement>(null);
   const focusAtStart = React.useCallback(() => {
     if (editorRef.current) {
@@ -220,9 +227,13 @@ function DocumentEditor(props: Props, ref: React.ForwardedRef<SharedEditor>) {
 
   return (
     <Flex auto column>
+      {showCover && (
+        <DocumentCover documentId={document.id} color={document.color} />
+      )}
       <DocumentTitle
         ref={titleRef}
         readOnly={readOnly}
+        hasCover={showCover}
         documentId={document.id}
         title={
           !document.title && readOnly

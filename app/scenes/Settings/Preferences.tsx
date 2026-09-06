@@ -82,6 +82,15 @@ function Preferences() {
     [user, t]
   );
 
+  const handleDocumentCoversChange = React.useCallback(
+    async (checked: boolean) => {
+      user.setPreference(UserPreference.DocumentCovers, checked);
+      await user.save();
+      toast.success(t("Preferences saved"));
+    },
+    [user, t]
+  );
+
   const handleShowDocumentStatsChange = React.useCallback(
     async (checked: boolean) => {
       user.setPreference(UserPreference.ShowDocumentStats, checked);
@@ -261,6 +270,20 @@ function Preferences() {
           name={UserPreference.CommentsInGutter}
           checked={user.getPreference(UserPreference.CommentsInGutter)}
           onChange={handleCommentsInGutterChange}
+        />
+      </SettingRow>
+      <SettingRow
+        name={UserPreference.DocumentCovers}
+        label={t("Document covers")}
+        description={t(
+          "Show a colour header band above the document title, tinted with the document's own icon colour."
+        )}
+      >
+        <Switch
+          id={UserPreference.DocumentCovers}
+          name={UserPreference.DocumentCovers}
+          checked={user.getPreference(UserPreference.DocumentCovers, true)}
+          onChange={handleDocumentCoversChange}
         />
       </SettingRow>
       <SettingRow
