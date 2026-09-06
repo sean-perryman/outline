@@ -28,18 +28,20 @@ export class FeatureFlags {
     // init on first read
     if (this.initalized === false) {
       runInAction(() => {
-        this.cache = new Set();
+        this.cache = new Map();
         for (const key of Object.values(Feature)) {
           const value = Storage.get(key);
-          if (value === true) {
-            this.cache.add(key);
+          // Both values are meaningful: a stored `false` is an explicit opt-out
+          // and must win over a default of `true`.
+          if (typeof value === "boolean") {
+            this.cache.set(key, value);
           }
         }
         this.initalized = true;
       });
     }
 
-    return this.cache.has(flag) ? true : (FeatureDefaults[flag] ?? false);
+    return this.cache.get(flag) ?? FeatureDefaults[flag] ?? false;
   }
 
   /**
@@ -49,7 +51,7 @@ export class FeatureFlags {
    */
   public static enable(flag: Feature) {
     runInAction(() => {
-      this.cache.add(flag);
+      this.cache.set(flag, true);
     });
     Storage.set(flag, true);
   }
@@ -61,13 +63,13 @@ export class FeatureFlags {
    */
   public static disable(flag: Feature) {
     runInAction(() => {
-      this.cache.delete(flag);
+      this.cache.set(flag, false);
     });
     Storage.set(flag, false);
   }
 
   @observable
-  private static cache: Set<Feature> = new Set();
+  private static cache: Map<Feature, boolean> = new Map();
 
   private static initalized = false;
 }
