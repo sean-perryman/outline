@@ -1465,6 +1465,8 @@
   "Show line numbers on code blocks in documents.": "Show line numbers on code blocks in documents.",
   "Show comment marker": "Show comment marker",
   "Display a marker beside lines in the editor that contain comments.": "Display a marker beside lines in the editor that contain comments.",
+  "Document covers": "Document covers",
+  "Show a colour header band above the document title, tinted with the document's own icon colour.": "Show a colour header band above the document title, tinted with the document's own icon colour.",
   "Display live word, character, and paragraph counts while editing.": "Display live word, character, and paragraph counts while editing.",
   "When enabled, documents have a separate editing mode. When disabled, documents are always editable when you have permission.": "When enabled, documents have a separate editing mode. When disabled, documents are always editable when you have permission.",
   "Remember previous location": "Remember previous location",
