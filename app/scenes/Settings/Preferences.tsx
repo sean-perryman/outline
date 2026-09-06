@@ -282,7 +282,7 @@ function Preferences() {
         <Switch
           id={UserPreference.CompactSidebar}
           name={UserPreference.CompactSidebar}
-          checked={user.getPreference(UserPreference.CompactSidebar)}
+          checked={user.getPreference(UserPreference.CompactSidebar, true)}
           onChange={handleCompactSidebarChange}
         />
       </SettingRow>

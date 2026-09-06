@@ -62,8 +62,12 @@ const Sidebar = React.forwardRef<HTMLDivElement, Props>(function Sidebar_(
   const isMobile = useMobile();
   // Compact density is a desktop affordance only — on touch devices the taller
   // rows are the hit target, so the preference is deliberately ignored there.
+  //
+  // This experiment branch defaults the preference on so that a preview
+  // environment demonstrates the change without anyone having to find the
+  // setting first. A shipping default would be off.
   const compact =
-    !isMobile && !!user?.getPreference(UserPreference.CompactSidebar);
+    !isMobile && !!user?.getPreference(UserPreference.CompactSidebar, true);
   const width = ui.sidebarWidth;
   const sidebarIsClosed = ui.sidebarIsClosed;
   const collapsed = sidebarIsClosed && canCollapse;
