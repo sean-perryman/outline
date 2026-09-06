@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import styled, { css, useTheme } from "styled-components";
 import breakpoint from "styled-components-breakpoint";
 import { depths, s } from "@shared/styles";
+import { UserPreference } from "@shared/types";
 import { Avatar } from "~/components/Avatar";
 import Flex from "~/components/Flex";
 import useCurrentUser from "~/hooks/useCurrentUser";
@@ -59,6 +60,10 @@ const Sidebar = React.forwardRef<HTMLDivElement, Props>(function Sidebar_(
   const previousLocation = usePrevious(location);
   const user = useCurrentUser({ rejectOnEmpty: false });
   const isMobile = useMobile();
+  // Compact density is a desktop affordance only — on touch devices the taller
+  // rows are the hit target, so the preference is deliberately ignored there.
+  const compact =
+    !isMobile && !!user?.getPreference(UserPreference.CompactSidebar);
   const width = ui.sidebarWidth;
   const sidebarIsClosed = ui.sidebarIsClosed;
   const collapsed = sidebarIsClosed && canCollapse;
@@ -280,6 +285,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, Props>(function Sidebar_(
         $mobileSidebarVisible={ui.mobileSidebarVisible}
         $collapsed={collapsed}
         $isMobile={isMobile}
+        $compact={compact}
         className={className}
         onPointerDown={handlePointerActivity}
         onPointerMove={handlePointerActivity}
@@ -344,6 +350,7 @@ type ContainerProps = {
   $collapsed: boolean;
   $hidden: boolean;
   $isMobile: boolean;
+  $compact: boolean;
 };
 
 const hoverStyles = (props: ContainerProps) => `
@@ -362,6 +369,15 @@ const hoverStyles = (props: ContainerProps) => `
 `;
 
 const Container = styled(Flex)<ContainerProps>`
+  ${(props: ContainerProps) =>
+    props.$compact &&
+    css`
+      --sidebar-row-padding-block: 2px;
+      --sidebar-row-min-height: 26px;
+      --sidebar-row-font-size: 15px;
+      --sidebar-row-icon-height: 22px;
+    `}
+
   position: fixed;
   top: 0;
   bottom: 0;
