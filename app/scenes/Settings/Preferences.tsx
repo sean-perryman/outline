@@ -82,6 +82,15 @@ function Preferences() {
     [user, t]
   );
 
+  const handleCompactSidebarChange = React.useCallback(
+    async (checked: boolean) => {
+      user.setPreference(UserPreference.CompactSidebar, checked);
+      await user.save();
+      toast.success(t("Preferences saved"));
+    },
+    [user, t]
+  );
+
   const handleShowDocumentStatsChange = React.useCallback(
     async (checked: boolean) => {
       user.setPreference(UserPreference.ShowDocumentStats, checked);
@@ -261,6 +270,20 @@ function Preferences() {
           name={UserPreference.CommentsInGutter}
           checked={user.getPreference(UserPreference.CommentsInGutter)}
           onChange={handleCommentsInGutterChange}
+        />
+      </SettingRow>
+      <SettingRow
+        name={UserPreference.CompactSidebar}
+        label={t("Compact sidebar")}
+        description={t(
+          "Reduce the height of sidebar rows to fit more collections and documents on screen."
+        )}
+      >
+        <Switch
+          id={UserPreference.CompactSidebar}
+          name={UserPreference.CompactSidebar}
+          checked={user.getPreference(UserPreference.CompactSidebar, true)}
+          onChange={handleCompactSidebarChange}
         />
       </SettingRow>
       <SettingRow
