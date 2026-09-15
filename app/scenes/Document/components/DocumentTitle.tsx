@@ -43,6 +43,8 @@ type Props = {
   placeholder?: string;
   /** Should the title be editable, policies will also be considered separately */
   readOnly?: boolean;
+  /** Whether a cover band is rendered above the title, which supplies its own spacing */
+  hasCover?: boolean;
   /** Callback called on any edits to text */
   onChangeTitle?: (text: string) => void;
   /** Callback called when the user selects an icon */
@@ -65,6 +67,7 @@ const DocumentTitle = React.forwardRef(function DocumentTitle_(
     icon,
     color,
     readOnly,
+    hasCover,
     onChangeTitle,
     onChangeIcon,
     onSave,
@@ -245,6 +248,7 @@ const DocumentTitle = React.forwardRef(function DocumentTitle_(
       value={title}
       $iconPickerIsOpen={iconPickerIsOpen}
       $containsIcon={!!icon}
+      $hasCover={hasCover}
       autoFocus={!title}
       maxLength={DocumentValidation.maxTitleLength}
       readOnly={readOnly}
@@ -281,6 +285,7 @@ const DocumentTitle = React.forwardRef(function DocumentTitle_(
 type TitleProps = {
   $containsIcon: boolean;
   $iconPickerIsOpen: boolean;
+  $hasCover?: boolean;
   readOnly?: boolean;
 };
 
@@ -292,7 +297,7 @@ const StyledIconPicker = styled(IconPicker)`
 const Title = styled(ContentEditable)<TitleProps>`
   position: relative;
   line-height: ${lineHeight};
-  margin-top: 8vh;
+  margin-top: ${(props: TitleProps) => (props.$hasCover ? "24px" : "8vh")};
   margin-bottom: 0.5em;
   font-size: ${fontSize};
   font-weight: 600;
@@ -327,7 +332,7 @@ const Title = styled(ContentEditable)<TitleProps>`
   }
 
   ${breakpoint("tablet")`
-    margin-top: 6vh;
+    margin-top: ${(props: TitleProps) => (props.$hasCover ? "24px" : "6vh")};
     margin-left: 0;
 
     &:hover {
