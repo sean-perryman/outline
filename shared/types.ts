@@ -379,6 +379,18 @@ export enum UserPreference {
   NotificationBadge = "notificationBadge",
   /** The display order of the reorderable sections in the sidebar. */
   SidebarSectionOrder = "sidebarSectionOrder",
+  /** The width of the document content column. */
+  ReadingWidth = "readingWidth",
+}
+
+/** The width of the document content column. */
+export enum ReadingWidth {
+  /** A shorter line length, for reading rather than editing. */
+  Narrow = "narrow",
+  /** The width documents have always used. */
+  Standard = "standard",
+  /** A longer line length, for tables and wide code blocks. */
+  Wide = "wide",
 }
 
 export enum HeadingPrefixStyle {
@@ -422,6 +434,7 @@ export type UserPreferences = {
   [UserPreference.ShowDocumentStats]?: boolean;
   [UserPreference.NotificationBadge]?: NotificationBadgeType;
   [UserPreference.SidebarSectionOrder]?: SidebarSection[];
+  [UserPreference.ReadingWidth]?: ReadingWidth;
 };
 
 export type SourceMetadata = {
