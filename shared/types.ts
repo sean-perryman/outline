@@ -379,6 +379,8 @@ export enum UserPreference {
   NotificationBadge = "notificationBadge",
   /** The display order of the reorderable sections in the sidebar. */
   SidebarSectionOrder = "sidebarSectionOrder",
+  /** Whether the sidebar uses reduced row height to fit more items on screen. */
+  CompactSidebar = "compactSidebar",
 }
 
 export enum HeadingPrefixStyle {
@@ -422,6 +424,7 @@ export type UserPreferences = {
   [UserPreference.ShowDocumentStats]?: boolean;
   [UserPreference.NotificationBadge]?: NotificationBadgeType;
   [UserPreference.SidebarSectionOrder]?: SidebarSection[];
+  [UserPreference.CompactSidebar]?: boolean;
 };
 
 export type SourceMetadata = {

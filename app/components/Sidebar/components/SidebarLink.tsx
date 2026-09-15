@@ -231,7 +231,7 @@ function SidebarLink(
 // accounts for whitespace around icon
 export const IconWrapper = styled.span`
   margin-inline-start: -4px;
-  height: 24px;
+  height: var(--sidebar-row-icon-height, 24px);
   overflow: hidden;
   flex-shrink: 0;
   transition: opacity 200ms ease-in-out;
@@ -306,15 +306,15 @@ const Link = styled(NavLink)<{
   position: relative;
   text-overflow: ellipsis;
   font-weight: 475;
-  padding: ${isMobile() ? 12 : 6}px 16px;
+  padding: var(--sidebar-row-padding-block, ${isMobile() ? 12 : 6}px) 16px;
   border-radius: 4px;
-  min-height: 30px;
+  min-height: var(--sidebar-row-min-height, 30px);
   user-select: none;
   white-space: nowrap;
   background: var(--background);
   color: ${(props) =>
     props.$isActiveDrop ? props.theme.white : props.theme.sidebarText};
-  font-size: 16px;
+  font-size: var(--sidebar-row-font-size, 16px);
   cursor: var(--pointer);
   overflow: hidden;
   border: 0;
